@@ -2,5 +2,5 @@
   "watch": ["src"],
   "ignore": ["**/*.test.js", "**/*.spec.js", ".git", "node_modules"],
   "ext": "ts,js",
-  "exec": "npm run lint && ts-node ./src/index.ts"
+  "exec": "ts-node ./src/index.ts"
 }

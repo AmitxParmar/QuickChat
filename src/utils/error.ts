@@ -1,6 +1,6 @@
-export const createError = (status: number, message: string) => {
+export const createError = (message: string) => {
   const err = new Error();
-  err.status = status;
+
   err.message = message;
   return err;
 };

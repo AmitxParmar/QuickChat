@@ -3,27 +3,37 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 import { createError } from "../utils/error";
+import { NextFunction, Request, Response } from "express";
 
-export const register = async (req, res, next) => {
+export const register = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(req.body.password, salt);
-
+    console.log(req, "register request receieved");
     const newUser = new User({
       ...req.body,
       password: hash,
     });
     await newUser.save();
+    console.log("user created!");
     res.status(200).send("User has been created!!");
   } catch (error) {
     next(error);
   }
 };
 
-export const login = async (req, res, next) => {
+export const login = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const user = await User.findOne({ email: req.body.email });
-    if (!user) next(createError(404, "No user found"));
+    if (!user) next(createError("No user found"));
 
     const isPasswordCorrect = await bcrypt.compare(
       req.body.password,
@@ -31,7 +41,7 @@ export const login = async (req, res, next) => {
     );
 
     if (!isPasswordCorrect)
-      return next(createError(400, "Wrong passowrd or username!"));
+      return next(createError("Wrong passowrd or username!"));
 
     const token = jwt.sign(
       {

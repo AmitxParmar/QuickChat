@@ -1,9 +1,9 @@
 declare global {
-    namespace NodeJS {
-        interface ProcessEnv {
-            MONGO_KEY: string
-        }
+  namespace NodeJS {
+    interface ProcessEnv {
+      MONGO_KEY: string;
     }
+  }
 }
 
-export {}
+export {};
