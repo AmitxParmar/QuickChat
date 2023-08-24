@@ -1,35 +1,49 @@
 module.exports = {
-  parser: "@typescript-eslint/parser",
   env: {
-    // browser: true,
     es6: true,
     node: true,
   },
+  parser: "@typescript-eslint/parser",
   extends: [
-    "standard-with-typescript",
     "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommended", // This line
-    "prettier",
+    "plugin:import/typescript",
+    "plugin:prettier/recommended",
   ],
-  overrides: [
-    {
-      env: {
-        node: true,
-      },
-      files: [".eslintrc.{js,cjs}"],
-      parserOptions: {
-        sourceType: "script",
-      },
-    },
-  ],
+  plugins: ["@typescript-eslint", "prettier"],
+
   parserOptions: {
-    ecmaVersion: "latest",
+    ecmaVersion: 2018,
     sourceType: "module",
-    project: "./tsconfig.json",
   },
-  plugins: ["prettier"],
+
   rules: {
-    "prettier/prettier": "error",
-    "@typescript-eslint/no-var-requires": "off"
+    semi: ["error", "never"],
+    "prettier/prettier": [
+      "error",
+      {
+        endOfLine: "",
+      },
+      {
+        usePrettierrc: false,
+      },
+    ],
+    "max-len": ["warn", { code: 120 }],
+    "comma-dangle": ["error", "always-multiline"],
+    "@typescript-eslint/semi": ["error"],
+    "object-curly-spacing": ["error", "always"],
+    "eol-last": ["error", "always"],
+    "lines-between-class-members": [
+      "error",
+      "always",
+      { exceptAfterSingleLine: true },
+    ],
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-parameter-properties": "off",
+    "@typescript-eslint/no-use-before-define": "off",
+    "max-classes-per-file": "error",
+    "prefer-template": "error",
+    "@typescript-eslint/camelcase": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-unused-vars": "off",
   },
 };

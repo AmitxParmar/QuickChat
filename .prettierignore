@@ -1,0 +1,10 @@
+package.json
+pnpm-lock.json
+
+CHANGELOG.md
+
+dist
+node_modules
+.next
+build
+.contentlayer
