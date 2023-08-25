@@ -22,7 +22,6 @@ const userSchema = new Schema(
     userType: {
       type: String,
       enum: ["Developer", "Organization", "Company"],
-      default: null,
     },
   },
   {

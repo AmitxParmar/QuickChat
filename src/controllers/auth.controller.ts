@@ -10,19 +10,29 @@ export const register = async (
   res: Response,
   next: NextFunction,
 ) => {
+  console.log("registerring......", req.body);
+  const { email,firstname,lastname}=req.body
   try {
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(req.body.password, salt);
-    console.log(req, "register request receieved");
+
     const newUser = new User({
-      ...req.body,
-      password: hash,
+      email,
+      firstname,
+      lastname,
+      password: hash
     });
+    
     await newUser.save();
     console.log("user created!");
-    res.status(200).send("User has been created!!");
+    res.status(200).send({
+      userInfo: {
+        email, firstname, lastname
+      }
+    });
   } catch (error) {
-    next(error);
+    console.log(error);
+    next(error)
   }
 };
 

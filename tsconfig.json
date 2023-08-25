@@ -19,7 +19,6 @@
     "noImplicitThis": false,
     "strictNullChecks": false
   },
-  
-  "include": ["src/**/*", "__tests__/**/*"],
-  "exclude": [".eslintrc.ts"]
+
+  "include": ["src/**/*", "__tests__/**/*"]
 }
