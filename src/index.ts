@@ -11,6 +11,7 @@ dotenv.config({ path: ".env" });
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(compression());
 app.use(cookieParser());
 
@@ -59,7 +60,7 @@ server.listen(process.env.PORT, () => {
   console.log(`Server running: ${process.env.PORT} Port`);
 });
 
-mongooseConnection().catch((e) => {
+mongooseConnection().catch(e => {
   console.log("catch mongo Errors:", e);
 });
 
@@ -73,7 +74,7 @@ async function mongooseConnection(): Promise<void> {
     .then(() => {
       console.log("Connected to MongoDB");
     })
-    .catch((error) => {
+    .catch(error => {
       console.error("Error connecting to MongoDB:", error);
     });
 }

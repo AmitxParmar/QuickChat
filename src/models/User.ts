@@ -1,4 +1,14 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, type Document } from "mongoose";
+
+export interface IUser extends Document {
+  fistname: string;
+  lastname: string;
+  email: string;
+  password: string;
+  userType: "Developer" | "Organization" | "Company";
+  organization?: string;
+  company?: string;
+}
 
 const userSchema = new Schema(
   {
@@ -21,7 +31,18 @@ const userSchema = new Schema(
     },
     userType: {
       type: String,
-      enum: ["Developer", "Organization", "Company"],
+      enum: ["developer", "organization", "company"],
+      default: "developer",
+    },
+    organization: {
+      type: String,
+    },
+    company: {
+      type: String,
+    },
+    hostingType: {
+      type: String,
+      enum: ["xerocode", "self"],
     },
   },
   {
