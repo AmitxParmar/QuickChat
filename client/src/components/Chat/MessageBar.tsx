@@ -14,6 +14,7 @@ import PhotoPicker from "../common/PhotoPicker";
 import { addMessage, setMessages } from "@/store/reducers/chatSlice";
 import CaptureAudio from "../common/CaptureAudio";
 import { useSocket } from "@/services/socketService";
+
 function MessageBar() {
   const [message, setMessage] = useState("");
   const [showEmojiPicker, setEmojiPicker] = useState(false);

@@ -19,6 +19,7 @@ function login() {
   const { userInfo, newUser } = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
+    console.log("userInfo", userInfo);
     if (userInfo?.id && !newUser) router.push("/");
   }, [userInfo, newUser]);
 
@@ -32,7 +33,7 @@ function login() {
         const { data } = await axios.post(CHECK_USER_ROUTE, {
           email,
         });
-
+        console.log("loggedin user data", data);
         if (!data.status) {
           dispatch(setNewUser(true));
           dispatch(setUserInfo({ name, email, profilePicture, about: "" }));
