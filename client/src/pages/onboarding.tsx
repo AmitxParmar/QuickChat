@@ -32,17 +32,21 @@ function onboarding() {
     if (validateDetails()) {
       const email = userInfo?.email;
       try {
-        const { data } = await axios.post(ONBOARD_USER_ROUTE, {
-          email,
-          name,
-          about,
-          image,
-        });
+        const { data }: { data: ApiData<IUserProfile> } = await axios.post(
+          ONBOARD_USER_ROUTE,
+          {
+            email,
+            name,
+            about,
+            image,
+          }
+        );
+
         if (data.status) {
           dispatch(setNewUser(false));
           dispatch(
             setUserInfo({
-              id: data.id,
+              id: data.data?.id,
               name,
               email,
               about,

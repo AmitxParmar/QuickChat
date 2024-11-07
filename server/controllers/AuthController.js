@@ -47,11 +47,12 @@ export const onBoardUser = async (req, res, next) => {
     }
     const prisma = getPrismaInstance();
 
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: { email, name, about, profilePicture },
     });
     console.log("successfully added user to the database!!");
-    return res.json({ msg: "Success", status: true });
+    console.log("User database", user);
+    return res.json({ msg: "Success", status: true, data: user });
   } catch (err) {
     console.log(err);
   }

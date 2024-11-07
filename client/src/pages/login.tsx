@@ -28,15 +28,26 @@ function login() {
     const {
       user: { displayName: name, email, photoURL: profilePicture },
     } = await signInWithPopup(auth, provider);
+
     try {
       if (email) {
-        const { data } = await axios.post(CHECK_USER_ROUTE, {
-          email,
-        });
+        const { data }: { data: ApiData<IUserProfile> } = await axios.post(
+          CHECK_USER_ROUTE,
+          { email }
+        );
+
         console.log("loggedin user data", data);
         if (!data.status) {
           dispatch(setNewUser(true));
-          dispatch(setUserInfo({ name, email, profilePicture, about: "" }));
+          dispatch(
+            setUserInfo({
+              id: data?.data?.id,
+              name,
+              email,
+              profilePicture,
+              about: "",
+            })
+          );
           router.push("/onboarding");
         } else {
           const { id, name, email, profilePicture, about } =
