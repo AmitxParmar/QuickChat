@@ -4,6 +4,7 @@ import { Socket, io } from "socket.io-client";
 
 const socket: Socket = io(HOST),
   SocketContext = createContext<Socket>(socket);
+
 socket.on("connect", () => console.log("socket connected!!"));
 
 const SocketProvider = ({ children }: { children: ReactNode }) => {

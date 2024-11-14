@@ -63,7 +63,9 @@ function Main() {
     if (socket && !socketEvent) {
       socket.on("msg-recieve", (data) => {
         console.log(data, "new message received using socket data");
-        dispatch(addMessage({ ...data.message }));
+        if (data) {
+          dispatch(addMessage({ ...data.message }));
+        }
       });
       setSocketEvent(true);
     }

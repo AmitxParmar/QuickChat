@@ -1,10 +1,10 @@
 import getPrismaInstance from "../utils/PrismaClient.js";
+import { renameSync } from "fs";
 
 export const addMessage = async (req, res, next) => {
   try {
     const prisma = getPrismaInstance();
     const { message, from, to } = req.body;
-    console.log("req.body", req.body);
     const getUser = onlineUsers.get(to);
     if (message && from && to) {
       const newMessage = await prisma.messages.create({
@@ -20,7 +20,6 @@ export const addMessage = async (req, res, next) => {
         },
         include: { sender: true, receiver: true },
       });
-      console.log("newMessage", newMessage);
       return res.status(201).send({ message: newMessage });
     }
     return res.status(400).send("From,to and Message is required.");
@@ -33,7 +32,6 @@ export const getMessage = async (req, res, next) => {
   try {
     const prisma = getPrismaInstance();
     const { from, to } = req.params;
-    console.log("req.params", req.params);
 
     const messages = await prisma.messages.findMany({
       where: {
@@ -52,7 +50,6 @@ export const getMessage = async (req, res, next) => {
         createdAt: "asc",
       },
     });
-    console.log("messages", messages);
 
     const unreadMessages = [];
 
@@ -62,7 +59,6 @@ export const getMessage = async (req, res, next) => {
         unreadMessages.push(message.id);
       }
     });
-    console.log("unreadMessages", unreadMessages);
     await prisma.messages.updateMany({
       where: {
         id: { in: unreadMessages },
@@ -81,12 +77,14 @@ export const getMessage = async (req, res, next) => {
 export const addImageMessage = async (req, res, next) => {
   try {
     if (req.file) {
-      const date = new Date.now();
-      let fileName = "uploads/images" + date + req.file.originalName;
-      renameSync(req.file.path, fileName);
-      const prisma = getPrismaInstance;
+      const date = new Date();
+      let fileName = `uploads/images/${date.getFullYear()}-${(
+        date.getMonth() + 1
+      )
+        .toString()
+        .padStart(2, "0")}-${date.getDate()}_${req.file.originalname}`;
+      const prisma = getPrismaInstance();
       const { from, to } = req.query;
-      console.log("req.query", req.query);
 
       if (from && to) {
         const message = await prisma.messages.create({
@@ -97,7 +95,6 @@ export const addImageMessage = async (req, res, next) => {
             type: "image",
           },
         });
-        console.log("message", message);
         return res.status(201).json({ message });
       }
       return res.status(400).send("From, to is required");

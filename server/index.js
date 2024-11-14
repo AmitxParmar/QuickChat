@@ -11,6 +11,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use("/uploads/images", express.static("uploads/images"));
+
 app.use("/api/auth", AuthRoutes);
 app.use("/api/messages", MessageRoutes);
 
@@ -25,24 +27,21 @@ const io = new Server(server, {
 });
 
 global.onlineUsers = new Map();
+
 io.on("connection", (socket) => {
   global.chatSocket = socket;
+
   socket.on("add-user", (userId) => {
     onlineUsers.set(userId, socket.id);
   });
+
   socket.on("send-msg", (data) => {
     const sendUserSocket = onlineUsers.get(data.to);
-    console.log(sendUserSocket, "sendSocketUser");
     if (sendUserSocket) {
-      console.log(
-        "if working too, meaning response right after receiving it",
-        data
-      );
-      socket.to(sendUserSocket).emit("msg-recieve"),
-        {
-          from: data.from,
-          message: data.message,
-        };
+      io.to(sendUserSocket).emit("msg-recieve", {
+        from: data.from,
+        message: data.message,
+      });
     }
   });
 });
