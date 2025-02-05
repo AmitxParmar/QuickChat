@@ -1,16 +1,15 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
 import { BiArrowBack, BiSearchAlt2 } from "react-icons/bi";
-
 import { GET_ALL_CONTACTS } from "@/utils/ApiRoutes";
-import { setContactPage } from "@/store/reducers/userSlice";
-
 import ChatListItem from "./ChatListItem";
+import { useStateProvider } from "@/context/StateContext";
+import { reducerCases } from "@/context/constants";
 
 function ContactsList() {
-  const dispatch = useDispatch();
+  /* const dispatch = useDispatch(); */
   const [allContacts, setAllContacts] = useState([]);
+  const { dispatch } = useStateProvider();
 
   useEffect(() => {
     async function getContacts() {
@@ -31,7 +30,11 @@ function ContactsList() {
     <div className="h-full flex flex-col">
       <div className="h-24 flex items-end px-3 py-4">
         <div className="flex items-center gap-12 text-white">
-          <BiArrowBack onClick={() => dispatch(setContactPage())} />
+          <BiArrowBack
+            onClick={() =>
+              dispatch({ type: reducerCases.SET_ALL_CONTACTS_PAGE })
+            }
+          />
           <span>New Chat</span>
         </div>
       </div>
@@ -61,7 +64,7 @@ function ContactsList() {
                 <ChatListItem
                   key={contact.id}
                   data={contact}
-                  isContactPage={true}
+                  isContactsPage={true}
                 />
               ))}
             </div>

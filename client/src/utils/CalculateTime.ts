@@ -1,4 +1,4 @@
-export const calculateTime = (inputDateStr) => {
+export const calculateTime = (inputDateStr: string): string | undefined => {
   // Assuming the input date string is in UTC format
   const inputDate = new Date(inputDateStr);
 
@@ -6,8 +6,11 @@ export const calculateTime = (inputDateStr) => {
   const currentDate = new Date();
 
   // Set up date formats
-  const timeFormat = { hour: "numeric", minute: "numeric" };
-  const dateFormat = {
+  const timeFormat: Intl.DateTimeFormatOptions = {
+    hour: "numeric",
+    minute: "numeric",
+  };
+  const dateFormat: Intl.DateTimeFormatOptions = {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -28,20 +31,23 @@ export const calculateTime = (inputDateStr) => {
     inputDate.getUTCFullYear() === currentDate.getUTCFullYear()
   ) {
     // Tomorrow: Show "Yesterday"
-
     return "Yesterday";
   } else if (
-    Math.floor((currentDate - inputDate) / (1000 * 60 * 60 * 24)) > 1 &&
-    Math.floor((currentDate - inputDate) / (1000 * 60 * 60 * 24)) <= 7
+    Math.floor(
+      (currentDate.getTime() - inputDate.getTime()) / (1000 * 60 * 60 * 24)
+    ) > 1 &&
+    Math.floor(
+      (currentDate.getTime() - inputDate.getTime()) / (1000 * 60 * 60 * 24)
+    ) <= 7
   ) {
     const timeDifference = Math.floor(
-      (currentDate - inputDate) / (1000 * 60 * 60 * 24)
+      (currentDate.getTime() - inputDate.getTime()) / (1000 * 60 * 60 * 24)
     );
 
     const targetDate = new Date();
     targetDate.setDate(currentDate.getDate() - timeDifference);
 
-    const daysOfWeek = [
+    const daysOfWeek: string[] = [
       "Sunday",
       "Monday",
       "Tuesday",
@@ -51,7 +57,6 @@ export const calculateTime = (inputDateStr) => {
       "Saturday",
     ];
     const targetDay = daysOfWeek[targetDate.getDay()];
-
     return targetDay;
   } else {
     // More than 7 days ago: Show date in DD/MM/YYYY format

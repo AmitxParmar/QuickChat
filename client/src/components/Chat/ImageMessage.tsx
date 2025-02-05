@@ -1,18 +1,15 @@
-import { RootState } from "@/store/store";
 import { HOST } from "@/utils/ApiRoutes";
 import { calculateTime } from "@/utils/CalculateTime";
 import Image from "next/image";
 import React from "react";
-import { useSelector } from "react-redux";
+
 import MessageStatus from "../common/MessageStatus";
+import { useStateProvider } from "@/context/StateContext";
 
 function ImageMessage({ message }: { message: IMessage }) {
-  
-  const currentChatUser = useSelector(
-    (state: RootState) => state.chat.currentChatUser
-  );
-  
-  const userInfo = useSelector((state: RootState) => state.user.userInfo);
+  const {
+    state: { currentChatUser, userInfo },
+  } = useStateProvider();
 
   return (
     <div

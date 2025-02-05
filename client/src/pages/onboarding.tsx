@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useDispatch, useSelector } from "react-redux";
-
 import axios from "axios";
 import Avatar from "@/components/common/Avatar";
 import Input from "@/components/common/Input";
 
-import { setNewUser, setUserInfo } from "@/store/reducers/userSlice";
-
 import { ONBOARD_USER_ROUTE } from "@/utils/ApiRoutes";
-import { RootState } from "@/store/store";
+
+import { useStateProvider } from "@/context/StateContext";
+import { reducerCases } from "@/context/constants";
 
 function onboarding() {
   const router = useRouter();
 
-  /* const { state, dispatch } = useStateProvider(); */
-  const dispatch = useDispatch();
-  const { userInfo, newUser } = useSelector((state: RootState) => state.user);
+  const {
+    state: { userInfo, newUser },
+    dispatch,
+  } = useStateProvider();
 
   const [name, setName] = useState<string>("");
   const [about, setAbout] = useState<string>("");
@@ -28,35 +27,32 @@ function onboarding() {
     else if (!newUser && userInfo?.email) router.push("/");
   }, [newUser, userInfo, router]);
 
-  const onboardUserHandler = async () => {
+  const onBoardUserHandler = async () => {
     if (validateDetails()) {
       const email = userInfo?.email;
       try {
-        const { data }: { data: ApiData<IUserProfile> } = await axios.post(
-          ONBOARD_USER_ROUTE,
-          {
-            email,
-            name,
-            about,
-            image,
-          }
-        );
-
+        const { data } = await axios.post(ONBOARD_USER_ROUTE, {
+          email,
+          name,
+          about,
+          image,
+        });
         if (data.status) {
-          dispatch(setNewUser(false));
-          dispatch(
-            setUserInfo({
-              id: data.data?.id,
+          dispatch({ type: reducerCases.SET_NEW_USER, newUser: false });
+          dispatch({
+            type: reducerCases.SET_USER_INFO,
+            userInfo: {
+              id: data.user.id,
               name,
               email,
-              about,
               profilePicture: image,
-            })
-          );
+              about,
+            },
+          });
           router.push("/");
         }
       } catch (err) {
-        console.error(err);
+        console.log(err);
       }
     }
   };
@@ -82,7 +78,7 @@ function onboarding() {
           <div className="flex items-center justify-center">
             <button
               className="flex items-center justify-center gap-7 bg-search-input-container-background p-5 rounded-lg"
-              onClick={() => onboardUserHandler()}
+              onClick={() => onBoardUserHandler()}
             >
               Create Profile
             </button>

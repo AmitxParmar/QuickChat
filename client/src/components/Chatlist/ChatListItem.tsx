@@ -1,33 +1,43 @@
 import React from "react";
 import Avatar from "../common/Avatar";
-
-import { useDispatch, useSelector } from "react-redux";
-
-import { changeCurrentChatUser } from "@/store/reducers/chatSlice";
-import { setContactPage } from "@/store/reducers/userSlice";
-import { RootState } from "@/store/store";
+import { useStateProvider } from "@/context/StateContext";
+import { reducerCases } from "@/context/constants";
 
 interface IChatListItem {
-  isContactPage: boolean;
+  isContactsPage: boolean;
   data: IUserProfile;
 }
 
-const ChatListItem = ({ isContactPage = false, data }: IChatListItem) => {
-  const dispatch = useDispatch();
-  const { userInfo } = useSelector((state: RootState) => state.user);
+const ChatListItem = ({ isContactsPage = false, data }: IChatListItem) => {
+  const {
+    state: { userInfo },
+    dispatch,
+  } = useStateProvider();
 
   const handleContactClick = () => {
-    if (userInfo?.id !== data.id) {
-      dispatch(changeCurrentChatUser(data));
-      console.log("the active user cant click");
-      dispatch(setContactPage());
+    if (!isContactsPage) {
+      dispatch({
+        type: reducerCases.CHANGE_CURRENT_CHAT_USER,
+        user: {
+          name: data.name,
+          about: data.about,
+          profilePicture: data.profilePicture,
+          email: data.email,
+          id: userInfo?.id === data.senderId ? data.receiverId : data.senderId,
+        },
+      });
+    } else {
+      dispatch({
+        type: reducerCases.CHANGE_CURRENT_CHAT_USER,
+        user: { ...data },
+      });
+      dispatch({ type: reducerCases.SET_ALL_CONTACTS_PAGE });
     }
   };
-
   return (
     <div
       className={`flex py-3 cursor-pointer items-center hover:bg-background-default-hover ${
-        isContactPage && null
+        isContactsPage && null
       }`}
       onClick={() => handleContactClick()}
     >

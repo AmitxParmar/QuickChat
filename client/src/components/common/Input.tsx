@@ -1,6 +1,13 @@
 import React from "react";
 
-function Input({ name, state, setState, label = false }) {
+interface InputProps {
+  name: string;
+  state: string;
+  setState: React.Dispatch<React.SetStateAction<string>>;
+  label?: boolean;
+}
+
+function Input({ name, state, setState, label = false }: InputProps) {
   return (
     <div className="flex gap-1 flex-col">
       {label && (

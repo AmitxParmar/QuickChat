@@ -1,18 +1,18 @@
 import Avatar from "../common/Avatar";
-import { useDispatch, useSelector } from "react-redux";
-
 import { BsFillChatLeftTextFill, BsThreeDotsVertical } from "react-icons/bs";
 import { signOut } from "firebase/auth";
-import { setContactPage } from "@/store/reducers/userSlice";
-import { RootState } from "@/store/store";
 import { auth } from "@/utils/FirebaseConfig";
+import { useStateProvider } from "@/context/StateContext";
+import { reducerCases } from "@/context/constants";
 
 function ChatListHeader() {
-  const userInfo = useSelector((state: RootState) => state.user.userInfo);
-  const dispatch = useDispatch();
+  const {
+    state: { userInfo },
+    dispatch,
+  } = useStateProvider();
 
   const handleAllContactsPage = () => {
-    dispatch(setContactPage());
+    dispatch({ type: reducerCases.SET_ALL_CONTACTS_PAGE });
   };
 
   return (

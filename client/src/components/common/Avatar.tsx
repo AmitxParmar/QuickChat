@@ -46,7 +46,7 @@ const Avatar: React.FC<IAvatar> = ({ type, image, setImage }) => {
     if (grabPhoto) {
       const data = document.getElementById("photo-picker");
       data?.click();
-      document.body.onfocus = (e) => {
+      document.body.onfocus = () => {
         setTimeout(() => {
           setGrabPhoto(false);
         }, 1000);
@@ -110,7 +110,12 @@ const Avatar: React.FC<IAvatar> = ({ type, image, setImage }) => {
         )}
         {type === "lg" && (
           <div className="relative h-14 w-14">
-            <Image src={image? image : "/default_avatar.png"} alt="avatar" className="rounded-full" fill />
+            <Image
+              src={image ? image : "/default_avatar.png"}
+              alt="avatar"
+              className="rounded-full"
+              fill
+            />
           </div>
         )}
         {type === "xl" && (

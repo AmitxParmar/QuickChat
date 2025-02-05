@@ -8,57 +8,60 @@ import { FcGoogle } from "react-icons/fc";
 
 import { auth } from "@/utils/FirebaseConfig";
 import { CHECK_USER_ROUTE } from "@/utils/ApiRoutes";
-import { useDispatch, useSelector } from "react-redux";
-import { setNewUser, setUserInfo } from "@/store/reducers/userSlice";
-import { RootState } from "@/store/store";
+
+import { useStateProvider } from "@/context/StateContext";
+import { reducerCases } from "@/context/constants";
 
 function login() {
   const router = useRouter();
-  const dispatch = useDispatch();
 
-  const { userInfo, newUser } = useSelector((state: RootState) => state.user);
+  const {
+    state: { userInfo, newUser },
+    dispatch,
+  } = useStateProvider();
 
   useEffect(() => {
-    console.log("userInfo", userInfo);
     if (userInfo?.id && !newUser) router.push("/");
   }, [userInfo, newUser]);
 
   const handleLogin = async () => {
     const provider = new GoogleAuthProvider();
     const {
-      user: { displayName: name, email, photoURL: profilePicture },
+      user: { displayName: name, email: email, photoURL: profilePicture },
     } = await signInWithPopup(auth, provider);
-
     try {
+      // Call API from utils/ApiRoutes.js
       if (email) {
-        const { data }: { data: ApiData<IUserProfile> } = await axios.post(
-          CHECK_USER_ROUTE,
-          { email }
-        );
-
-        console.log("loggedin user data", data);
+        const { data } = await axios.post(CHECK_USER_ROUTE, { email });
         if (!data.status) {
-          dispatch(setNewUser(true));
-          dispatch(
-            setUserInfo({
-              id: data?.data?.id,
-              name,
-              email,
-              profilePicture,
-              about: "",
-            })
-          );
+          dispatch({
+            type: reducerCases.SET_NEW_USER,
+            newUser: true,
+          });
+          dispatch({
+            type: reducerCases.SET_USER_INFO,
+            userInfo: { name, email, profilePicture, about: "" },
+          });
+
           router.push("/onboarding");
-        } else {
-          const { id, name, email, profilePicture, about } =
-            data as IUserProfile;
-          dispatch(setUserInfo({ id, name, email, profilePicture, about }));
+        } else if (data.status) {
+          const { id, email, name, profilePicture, about } = data.data;
+          dispatch({
+            type: reducerCases.SET_NEW_USER,
+            newUser: false,
+          });
+          dispatch({
+            type: reducerCases.SET_USER_INFO,
+            userInfo: { id, name, email, profilePicture, about },
+          });
           router.push("/");
         }
       }
-    } catch (err) {
-      console.log(err);
+    } catch (e) {
+      console.log(e);
     }
+
+    // console.log({ user }) // Get display name, email, and profile photo URL
   };
 
   return (

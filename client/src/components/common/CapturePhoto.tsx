@@ -8,27 +8,34 @@ interface ICapturePhoto {
 }
 
 const CapturePhoto: FC<ICapturePhoto> = ({ setImage, hide }) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   useEffect(() => {
-    let stream;
+    let stream: MediaStream | undefined;
     const startCamera = async () => {
       stream = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: false,
       });
-      videoRef1.current.srcObject = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
     };
     startCamera();
     return () => {
-      stream?.getTracks().firEach((track) => track.stop());
+      stream?.getTracks().forEach((track: MediaStreamTrack) => track.stop());
     };
   }, []);
+
   const capturePhoto = () => {
     const canvas = document.createElement("canvas");
-    canvas.getContext("2d")?.drawImage(videoRef.current, 0, 0, 300, 150);
-    setImage?.(canvas.toDataURL("image/jpeg"));
-    hide(false);
+    const context = canvas.getContext("2d");
+    if (context && videoRef.current) {
+      context.drawImage(videoRef.current, 0, 0, 300, 150);
+      setImage?.(canvas.toDataURL("image/jpeg"));
+      hide(false);
+    }
   };
+
   return (
     <div className="absolute h-4/6 w-2/6 top-1/4 left-1/3 bg-gray-900 gap-3 rounded-lg pt-2 flex items-center justify-center">
       <div className="flex flex-col gap-4 w-full items-center justify-center">
@@ -43,9 +50,9 @@ const CapturePhoto: FC<ICapturePhoto> = ({ setImage, hide }) => {
         </div>
         <button
           className="h-16 w-16 bg-white rounded-full cursor-pointer border-8 border-teal-light p-2 mb-10"
-          onClick={() => console.log("pcture clicked!!")}
+          onClick={capturePhoto}
         >
-          BUtton
+          Button
         </button>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, type MouseEvent } from "react";
+import React, { type MouseEvent } from "react";
 import OutsideClick from "../OutsideClickHandler";
 
 type Cordinates = {
@@ -21,7 +21,6 @@ interface IContextMenu {
 const ContextMenu: React.FC<IContextMenu> = ({
   options,
   cordinates,
-  contextMenu,
   setContextMenu,
 }) => {
   const contextMenuRef = React.useRef<HTMLDivElement | null>(null);

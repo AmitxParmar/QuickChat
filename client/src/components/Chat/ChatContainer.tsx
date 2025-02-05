@@ -1,24 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-
-import { RootState } from "@/store/store";
 import { calculateTime } from "@/utils/CalculateTime";
-
 import MessageStatus from "@/components/common/MessageStatus";
 import ImageMessage from "./ImageMessage";
+import { useStateProvider } from "@/context/StateContext";
 
 function ChatContainer() {
-  /* const [Messagess, setMessages] = useState<IMessage[]>([]); */
-
-  const { userInfo } = useSelector((state: RootState) => state.user);
-  const { messages, currentChatUser } = useSelector(
-    (state: RootState) => state.chat
-  );
-
-  /* useEffect(() => {
-    setMessages(messages);
-    console.log('it should also trigger when new message is added!!')
-  }, [messages]); */
+  const {
+    state: { messages, currentChatUser, userInfo },
+  } = useStateProvider();
 
   return (
     <div className="h-[80vh] w-full relative flex-grow overflow-auto custom-scrollbar">
