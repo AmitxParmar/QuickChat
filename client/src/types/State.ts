@@ -7,9 +7,10 @@ export interface State {
   contactsPage?: boolean;
   currentChatUser?: IUserProfile | undefined;
   messages: IMessage[];
+  contactSearch?: string;
   socket?: React.RefObject<Socket> | null;
   messagesSearch?: boolean;
-  userContacts?: IUserProfile[] | undefined;
+  userContacts?: IUserProfile[];
   onlineUsers?: IUserProfile[] | undefined;
   filteredContacts?: IUserProfile[];
 }
@@ -23,6 +24,7 @@ export interface Action {
   contactsPage?: boolean;
   currentChatUser?: IUserProfile;
   messages?: IMessage[];
+  contactSearch?: string;
   socket?: React.RefObject<Socket> | null;
   messagesSearch?: boolean;
   newMessage?: IMessage;

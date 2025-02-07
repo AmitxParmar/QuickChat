@@ -4,7 +4,7 @@ import { useStateProvider } from "@/context/StateContext";
 import { reducerCases } from "@/context/constants";
 
 interface IChatListItem {
-  isContactsPage: boolean;
+  isContactsPage?: boolean;
   data: IUserProfile;
 }
 
