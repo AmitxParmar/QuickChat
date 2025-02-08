@@ -14,11 +14,10 @@ import {
   FaMicrophone,
   FaPauseCircle,
   FaPlay,
-  FaStop,
+  FaPause,
   FaTrash,
 } from "react-icons/fa";
 import { MdSend } from "react-icons/md";
-
 import WaveSurfer from "wavesurfer.js";
 
 interface ICaptureAudio {
@@ -90,11 +89,12 @@ function CaptureAudio({ hide }: ICaptureAudio) {
     setCurrentPlaybackTime(0);
     setTotalDuration(0);
     setIsRecording(true);
+    setRecordedAudio(null);
+
     navigator.mediaDevices
       .getUserMedia({ audio: true })
       .then((stream) => {
         const mediaRecorder = new MediaRecorder(stream);
-        console.log(mediaRecorder);
         mediaRecorderRef.current = mediaRecorder;
         if (audioRef.current) {
           audioRef.current.srcObject = stream;
@@ -113,11 +113,12 @@ function CaptureAudio({ hide }: ICaptureAudio) {
         mediaRecorder.start();
       })
       .catch((error) => {
-        console.log("Recording Start Error:", error);
+        console.error("Recording Start Error: ", error.message.includes("Requested device not found") ? "Microphone not found. Please check your device settings." : error);
       });
   };
 
   const handleStopRecording = () => {
+    console.log("handle stop triggered");
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
@@ -136,8 +137,26 @@ function CaptureAudio({ hide }: ICaptureAudio) {
         const audioFile = new File([audioBlob], "recording.mp3");
         setRenderedAudio(audioFile);
       });
+    } else {
+      console.error("No recording in progress to stop.");
     }
   };
+
+  useEffect(() => {
+    const updatePlaybackTime = () => {
+      if (recordedAudio) {
+        setCurrentPlaybackTime(recordedAudio.currentTime);
+      }
+    };
+    if (recordedAudio) {
+      recordedAudio.addEventListener("timeupdate", updatePlaybackTime);
+    }
+    return () => {
+      if (recordedAudio) {
+        recordedAudio.removeEventListener("timeupdate", updatePlaybackTime);
+      }
+    };
+  }, [recordedAudio]);
 
   const handlePlayRecording = () => {
     if (recordedAudio) {
@@ -145,28 +164,25 @@ function CaptureAudio({ hide }: ICaptureAudio) {
       waveform?.play();
       recordedAudio.play();
       setIsPlaying(true);
+      recordedAudio.onended = () => setIsPlaying(false); // Reset isPlaying when audio ends
     }
   };
 
   const handlePauseRecording = () => {
-    waveform?.stop();
-    recordedAudio?.pause();
-    setIsPlaying(false);
-  };
-
-  const formatTime = (time: number) => {
-    if (isNaN(time)) return "00:00";
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes.toString().padStart(2, "0")}:${seconds
-      .toString()
-      .padStart(2, "0")}`;
+    console.log("handle pause triggered");
+    if (recordedAudio) {
+      waveform?.stop();
+      recordedAudio.pause();
+      setIsPlaying(false);
+    } else {
+      console.error("No audio to pause.");
+    }
   };
 
   const sendRecording = async () => {
     try {
       if (!renderedAudio) {
-        console.error("No audio file to send");
+        console.error("No audio file to send. Please record audio first.");
         return; // Exit if renderedAudio is null
       }
 
@@ -203,15 +219,24 @@ function CaptureAudio({ hide }: ICaptureAudio) {
     }
   };
 
+  const formatTime = (time: number) => {
+    if (isNaN(time)) return "00:00";
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes.toString().padStart(2, "0")}:${seconds
+      .toString()
+      .padStart(2, "0")}`;
+  };
+
   return (
-    <div className="flex text-2xl w-full justify-end items-center">
+    <div className="flex justify-end items-center text-2xl w-full">
       <div className="pt-1">
         <FaTrash
           className="text-panel-header-icon"
-          onClick={() => hide(true)}
+          onClick={() => hide(false)}
         />
       </div>
-      <div className="mx-4 py-2 px-4 text-white text-lg flex gap-3 justify-center items-center bg-search-input-container-background rounded-full drop-shadow-lg">
+      <div className="mx-4 px-4 py-2 text-white text-lg flex justify-center items-center gap-3 bg-search-input-container-background rounded-full drop-shadow-lg">
         {isRecording ? (
           <div className="text-red-500 animate-pulse 2-60 text-center">
             Recording <span>{recordingDuration}</span>
@@ -223,13 +248,12 @@ function CaptureAudio({ hide }: ICaptureAudio) {
                 {!isPlaying ? (
                   <FaPlay onClick={handlePlayRecording} />
                 ) : (
-                  <FaStop onClick={handlePauseRecording} />
+                  <FaPause onClick={handlePauseRecording} />
                 )}
               </>
             )}
           </div>
         )}
-
         <div className="w-60" ref={waveformRef} hidden={isRecording} />
         {recordedAudio && isPlaying && (
           <span>{formatTime(currentPlaybackTime)}</span>
@@ -238,6 +262,7 @@ function CaptureAudio({ hide }: ICaptureAudio) {
           <span>{formatTime(totalDuration)}</span>
         )}
         <audio ref={audioRef} hidden />
+
         <div className="mr-4">
           {!isRecording ? (
             <FaMicrophone

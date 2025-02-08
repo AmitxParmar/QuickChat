@@ -11,7 +11,7 @@ export interface State {
   socket?: React.RefObject<Socket> | null;
   messagesSearch?: boolean;
   userContacts?: IUserProfile[];
-  onlineUsers?: IUserProfile[] | undefined;
+  onlineUsers?: string[];
   filteredContacts?: IUserProfile[];
 }
 
@@ -29,7 +29,7 @@ export interface Action {
   messagesSearch?: boolean;
   newMessage?: IMessage;
   userContacts?: IUserProfile[];
-  onlineUsers?: IUserProfile[] | undefined;
+  onlineUsers?: [id: string] | [];
   filteredContacts?: IUserProfile[];
   fromSelf?: boolean;
 }

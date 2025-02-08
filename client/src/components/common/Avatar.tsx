@@ -143,8 +143,7 @@ const Avatar: React.FC<IAvatar> = ({ type, image, setImage }) => {
       {isContextMenuVisible && (
         <ContextMenu
           options={contextMenuOptions}
-          cordinates={contextMenuCordinates}
-          contextMenu={isContextMenuVisible}
+          coordinates={contextMenuCordinates}
           setContextMenu={setIsContextMenuVisible}
         />
       )}

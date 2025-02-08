@@ -1,46 +1,54 @@
-import React, { type MouseEvent } from "react";
-import OutsideClick from "../OutsideClickHandler";
+import React, {
+  type MouseEvent,
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+} from "react";
 
-type Cordinates = {
+type Coordinates = {
   x: number;
   y: number;
 };
 
-type Options = {
-  name: string;
-  callback: () => void;
-};
+type Options = { name: string; callback: () => void };
 
 interface IContextMenu {
   options: Options[];
-  cordinates: Cordinates;
-  contextMenu: boolean;
-  setContextMenu: (isOpen: boolean) => void;
+  coordinates: Coordinates;
+
+  setContextMenu: Dispatch<SetStateAction<boolean>>;
 }
 
 const ContextMenu: React.FC<IContextMenu> = ({
   options,
-  cordinates,
+  coordinates,
   setContextMenu,
 }) => {
   const contextMenuRef = React.useRef<HTMLDivElement | null>(null);
 
-  /*   useEffect(() => {
-    const handleOutsideClick = (event: MouseEvent): void => {
-      if (event.currentTarget.id !== "context-opener") {
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement; // Cast to HTMLElement
+      if (target.id !== "context-opener") {
         if (
           contextMenuRef.current &&
-          contextMenuRef.current.contains(event.currentTarget)
+          !contextMenuRef.current.contains(target)
         ) {
           setContextMenu(false);
         }
       }
     };
-    document.addEventListener("click", handleOutsideClick);
+    document.addEventListener(
+      "click",
+      handleClickOutside as unknown as EventListener
+    );
     return () => {
-      document.removeEventListener("click", handleOutsideClick);
+      document.removeEventListener(
+        "click",
+        handleClickOutside as unknown as EventListener
+      );
     };
-  }, []); */
+  }, []);
 
   const handleClick = (e: MouseEvent, callback: () => void) => {
     e.stopPropagation();
@@ -49,28 +57,26 @@ const ContextMenu: React.FC<IContextMenu> = ({
   };
 
   return (
-    <OutsideClick onOutsideClick={handleClick}>
-      <div
-        className={`bg-dropdown-background fixed py-2 z-[100] shadow-xl`}
-        ref={contextMenuRef}
-        style={{
-          top: cordinates.y,
-          left: cordinates.x,
-        }}
-      >
-        <ul>
-          {options.map(({ name, callback }) => (
-            <li
-              key={name}
-              onClick={(e) => handleClick(e, callback)}
-              className="px-5 py-2 cursor-pointer hover:bg-background-default-hover"
-            >
-              <span className="text-white">{name}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </OutsideClick>
+    <div
+      className={`bg-dropdown-background fixed py-2 z-[100] shadow-xl`}
+      style={{
+        top: coordinates.y,
+        left: coordinates.x,
+      }}
+      ref={contextMenuRef}
+    >
+      <ul>
+        {options.map(({ name, callback }) => (
+          <li
+            className="px-5 py-2 cursor-pointer hover:bg-background-default-hover"
+            key={name}
+            onClick={(e) => handleClick(e, callback)}
+          >
+            <span className="text-white">{name}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 };
 

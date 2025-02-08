@@ -13,7 +13,7 @@ function ContactsList() {
   const [allContacts, setAllContacts] = useState<Contact>({});
   const [searchContacts, setSearchContacts] = useState<Contact>({});
   const [searchTerm, setSearchTerm] = useState("");
-  const { dispatch } = useStateProvider();
+  const { state, dispatch } = useStateProvider(); // Get userInfo from state
 
   useEffect(() => {
     const filteredData: Contact = {};
@@ -81,13 +81,17 @@ function ContactsList() {
                 </div>
               )}
               <div>
-                {userList.map((contact) => (
-                  <ChatListItem
-                    data={contact}
-                    isContactsPage={true}
-                    key={contact.id}
-                  />
-                ))}
+                {userList.map((contact) => {
+                  // Prevent current user from clicking on their own contact
+                  if (contact.id === state.userInfo?.id) return null;
+                  return (
+                    <ChatListItem
+                      data={contact}
+                      isContactsPage={true}
+                      key={contact.id}
+                    />
+                  );
+                })}
               </div>
             </div>
           );

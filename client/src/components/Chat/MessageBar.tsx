@@ -7,7 +7,6 @@ import { FaMicrophone } from "react-icons/fa";
 import { ImAttachment } from "react-icons/im";
 import { MdSend } from "react-icons/md";
 
-import OutsideClick from "../OutsideClickHandler";
 import PhotoPicker from "../common/PhotoPicker";
 
 import dynamic from "next/dynamic";
@@ -29,6 +28,24 @@ function MessageBar() {
   const [showAudioRecorder, setShowAudioRecorder] = useState(false);
 
   const emojiPickerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement; // Cast to HTMLElement
+      if (target.id !== "emoji-open") {
+        if (
+          emojiPickerRef.current &&
+          !emojiPickerRef.current.contains(target)
+        ) {
+          setEmojiPicker(false);
+        }
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [showEmojiPicker]);
 
   // Handle Emoji Modal
   const handleEmojiModal = (): void => setEmojiPicker(!showEmojiPicker);
@@ -129,14 +146,12 @@ function MessageBar() {
               onClick={handleEmojiModal}
             />
             {showEmojiPicker && (
-              <OutsideClick onOutsideClick={handleEmojiModal}>
-                <div
-                  className="absolute bottom-24 left-16 z-40"
-                  ref={emojiPickerRef}
-                >
-                  <EmojiPicker onEmojiClick={handleEmojiClick} />
-                </div>
-              </OutsideClick>
+              <div
+                className="absolute bottom-24 left-16 z-40"
+                ref={emojiPickerRef}
+              >
+                <EmojiPicker onEmojiClick={handleEmojiClick} />
+              </div>
             )}
             <ImAttachment
               className="text-panel-header-icon cursor-pointer text-xl"
@@ -170,9 +185,9 @@ function MessageBar() {
               )}
             </button>
           </div>
+          {grabPhoto && <PhotoPicker onChange={photoPickerChange} />}
         </>
       )}
-      {grabPhoto && <PhotoPicker onChange={photoPickerChange} />}
       {showAudioRecorder && <CaptureAudio hide={setShowAudioRecorder} />}
     </div>
   );

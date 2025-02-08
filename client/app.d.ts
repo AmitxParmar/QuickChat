@@ -1,8 +1,8 @@
 type IUserProfile = {
   id?: string;
-  name: string | null;
-  email: string | null | undefined;
-  profilePicture: string | null;
+  name?: string | null;
+  email?: string | null | undefined;
+  profilePicture?: string | null;
   about?: string | null;
   senderId?: string;
   receiverId?: string;
