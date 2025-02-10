@@ -2,6 +2,7 @@ import { calculateTime } from "@/utils/CalculateTime";
 import MessageStatus from "@/components/common/MessageStatus";
 import ImageMessage from "./ImageMessage";
 import { useStateProvider } from "@/context/StateContext";
+import VoiceMessage from "./VoiceMessage";
 
 function ChatContainer() {
   const {
@@ -49,6 +50,7 @@ function ChatContainer() {
                   </div>
                 )}
                 {message.type === "image" && <ImageMessage message={message} />}
+                {message.type === "audio" && <VoiceMessage message={message} />}
               </div>
             ))}
           </div>

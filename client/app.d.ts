@@ -16,7 +16,7 @@ type ApiData<T> = {
 
 type IMessage = {
   id: string;
-  type: "text" | "file" | "image";
+  type: "text" | "file" | "image" | "audio";
   message: string;
   recieverId: string;
   senderId: string;
