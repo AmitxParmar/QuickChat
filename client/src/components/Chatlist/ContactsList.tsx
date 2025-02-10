@@ -7,9 +7,6 @@ import { useStateProvider } from "@/context/StateContext";
 import { reducerCases } from "@/context/constants";
 
 function ContactsList() {
-  type Contact = {
-    [initialLetter: string]: IUserProfile[];
-  };
   const [allContacts, setAllContacts] = useState<Contact>({});
   const [searchContacts, setSearchContacts] = useState<Contact>({});
   const [searchTerm, setSearchTerm] = useState("");

@@ -48,12 +48,14 @@ const CapturePhoto: FC<ICapturePhoto> = ({ setImage, hide }) => {
         <div className="flex justify-center">
           <video id="video" width={400} autoPlay ref={videoRef}></video>
         </div>
-        <button
-          className="h-16 w-16 bg-white rounded-full cursor-pointer border-8 border-teal-light p-2 mb-10"
-          onClick={capturePhoto}
-        >
-          Button
-        </button>
+        <div className="flex items-center justify-center p-2 mb-10">
+          <button
+            className="w-16 h-16 bg-white rounded-full cursor-pointer border-8 border-teal-light"
+            onClick={capturePhoto}
+          >
+            Button
+          </button>
+        </div>
       </div>
     </div>
   );

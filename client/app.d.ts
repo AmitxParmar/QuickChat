@@ -6,6 +6,8 @@ type IUserProfile = {
   about?: string | null;
   senderId?: string;
   receiverId?: string;
+  totalUnreadMessages?: number;
+  createdAt?: string | undefined;
 };
 
 type ApiData<T> = {
@@ -24,4 +26,8 @@ type IMessage = {
   reciever: IUserProfile;
   sender: IUserProfile;
   createdAt: string;
+};
+
+type Contact = {
+  [initialLetter: string]: IUserProfile[];
 };

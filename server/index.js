@@ -11,6 +11,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use("/uploads/recordings", express.static("uploads/recordings"));
 app.use("/uploads/images", express.static("uploads/images"));
 
 app.use("/api/auth", AuthRoutes);
@@ -31,10 +32,12 @@ global.onlineUsers = new Map();
 io.on("connection", (socket) => {
   global.chatSocket = socket;
 
+  // add user
   socket.on("add-user", (userId) => {
     onlineUsers.set(userId, socket.id);
   });
 
+  // send msg
   socket.on("send-msg", (data) => {
     const sendUserSocket = onlineUsers.get(data.to);
     if (sendUserSocket) {
@@ -43,5 +46,14 @@ io.on("connection", (socket) => {
         message: data.message,
       });
     }
+  });
+
+  // log user out
+  socket.on("sign-out", (userId) => {
+    onlineUsers.delete(userId);
+    socket.broadcast.emit("online-users", {
+      // example: onlineUsers: [1 => 'abc', 2 => 'bcd', 3 => 'cde]
+      onlineUsers: Array.from(onlineUsers.keys()),
+    });
   });
 });
