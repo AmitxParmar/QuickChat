@@ -135,8 +135,9 @@ export const addAudioMessage = async (req, res, next) => {
 // Get the lastest message of each contact
 // Example data: {users:[...messages, ...onlineUsers]}
 export const getInitialContactswithMessages = async (req, res, next) => {
+  const prisma = getPrismaInstance();
   try {
-    const userId = parseInt(req.params.from);
+    const userId = req.params.from; //Do not parse as integer.  The ID is a string.
     // get sent msg & received msg from userId
     const user = await prisma.user.findUnique({
       where: {
@@ -163,6 +164,10 @@ export const getInitialContactswithMessages = async (req, res, next) => {
         },
       },
     });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
     const messages = [...user.sentMessages, ...user.receivedMessages];
     // getTime() return: 1627777777777 (miliseconds)
@@ -241,7 +246,7 @@ export const getInitialContactswithMessages = async (req, res, next) => {
       // example users: [{id: 1, name: "Minh Nghia", totalUnreadMessages: 0}, {id: 2, name: "Johnny Depth", totalUnreadMessages: 1}]
       users: Array.from(users.values()),
       // example onlineUsers: [1, 2]
-      onlineUsers: Array.from(onlineUsers.keys()),
+      onlineUsers: [], // Initialize onlineUsers to an empty array.  It's not defined in this scope.
     });
   } catch (err) {
     next(err);

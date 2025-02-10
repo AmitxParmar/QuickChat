@@ -1,4 +1,4 @@
-import React, { useState, MouseEvent } from "react";
+import React, { useState } from "react";
 import Avatar from "@/components/common/Avatar";
 import { MdCall } from "react-icons/md";
 import { IoVideocam } from "react-icons/io5";
@@ -19,7 +19,7 @@ function ChatHeader() {
   });
   const [isContextMenuVisible, setIsContextMenuVisible] = useState(false);
 
-  const showContextMenu = (e: MouseEvent) => {
+  const showContextMenu = (e: React.MouseEvent<SVGAElement>) => {
     e.preventDefault();
     setContextMenuCoordinates({ x: e.pageX - 50, y: e.pageY + 20 });
     setIsContextMenuVisible(true);
