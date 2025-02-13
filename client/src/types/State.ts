@@ -13,6 +13,9 @@ export interface State {
   userContacts?: IUserProfile[];
   onlineUsers?: string[];
   filteredContacts?: IUserProfile[];
+
+  voiceCall?: ICall | undefined;
+  incomingVoiceCall?: ICall | undefined;
 }
 
 export interface Action {
@@ -32,4 +35,7 @@ export interface Action {
   onlineUsers?: [id: string] | [];
   filteredContacts?: IUserProfile[];
   fromSelf?: boolean;
+
+  voiceCall?: ICall | undefined;
+  incomingVoiceCall?: undefined;
 }

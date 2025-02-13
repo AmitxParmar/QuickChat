@@ -31,3 +31,10 @@ type IMessage = {
 type Contact = {
   [initialLetter: string]: IUserProfile[];
 };
+
+interface ICall extends IUserProfile {
+  from?: string;
+  roomId?: string;
+  callType?: string;
+  type?: string;
+}

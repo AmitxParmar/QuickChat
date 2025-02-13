@@ -48,6 +48,32 @@ io.on("connection", (socket) => {
     }
   });
 
+  // voice calls
+  socket.on("outgoing-voice-call", (data) => {
+    const sendUserSocket = onlineUsers.get(data.to);
+    if (sendUserSocket) {
+      socket.to(sendUserSocket).emit("incoming-voice-call", {
+        from: data.from,
+        roomId: data.roomId,
+        callType: data.callType,
+      });
+    }
+  });
+
+  socket.on("reject-voice-call", (data) => {
+    const sendUserSocket = onlineUsers.get(data.from);
+    if (sendUserSocket) {
+      socket.to(sendUserSocket).emit("voice-call-rejected");
+    }
+  });
+
+  socket.on("accept-incoming-call", (id) => {
+    const sendUserSocket = onlineUsers.get(id);
+    if (sendUserSocket) {
+      socket.to(sendUserSocket).emit("accept-call");
+    }
+  });
+
   // log user out
   socket.on("sign-out", (userId) => {
     onlineUsers.delete(userId);

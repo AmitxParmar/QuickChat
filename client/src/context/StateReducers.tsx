@@ -12,6 +12,9 @@ export const initialState: State = {
   userContacts: [],
   onlineUsers: [],
   filteredContacts: [],
+
+  voiceCall: undefined,
+  incomingVoiceCall: undefined,
 };
 
 const reducer = (state: State, action: Action): State => {
