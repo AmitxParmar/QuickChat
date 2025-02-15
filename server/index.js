@@ -35,6 +35,9 @@ io.on("connection", (socket) => {
   // add user
   socket.on("add-user", (userId) => {
     onlineUsers.set(userId, socket.id);
+    socket.broadcast.emit("online-users", {
+      onlineUsers: Array.from(onlineUsers.keys()),
+    });
   });
 
   // send msg
@@ -64,6 +67,31 @@ io.on("connection", (socket) => {
     const sendUserSocket = onlineUsers.get(data.from);
     if (sendUserSocket) {
       socket.to(sendUserSocket).emit("voice-call-rejected");
+    }
+  });
+
+  socket.on("outgoing-video-call", (data) => {
+    const sendUserSocket = onlineUsers.get(data.to);
+    if (sendUserSocket) {
+      socket.to(sendUserSocket).emit("incoming-video-call", {
+        from: data.from,
+        roomId: data.roomId,
+        callType: data.callType,
+      });
+    }
+  });
+
+  socket.on("reject-voice-call", (data) => {
+    const sendUserSocket = onlineUsers.get(data.from);
+    if (sendUserSocket) {
+      socket.to(sendUserSocket).emit("voice-call-rejected");
+    }
+  });
+
+  socket.on("reject-video-call", (data) => {
+    const sendUserSocket = onlineUsers.get(data.from);
+    if (sendUserSocket) {
+      socket.to(sendUserSocket).emit("video-call-rejected");
     }
   });
 

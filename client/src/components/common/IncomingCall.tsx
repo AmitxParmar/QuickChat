@@ -31,7 +31,7 @@ function IncomingCall() {
     dispatch({
       type: reducerCases.END_CALL,
     });
-    socket?.current?.emit("reject-voice-call", { from: incomingVoiceCall.id });
+    socket?.current?.emit("reject-voice-call", { from: incomingVoiceCall?.id });
   };
 
   return (

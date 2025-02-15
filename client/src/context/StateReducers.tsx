@@ -82,6 +82,39 @@ const reducer = (state: State, action: Action): State => {
         contactSearch: action.contactSearch,
         filteredContacts,
       };
+    case reducerCases.SET_VIDEO_CALL: {
+      return {
+        ...state,
+        videoCall: action.videoCall,
+      };
+    }
+    case reducerCases.SET_VOICE_CALL: {
+      return {
+        ...state,
+        voiceCall: action.voiceCall,
+      };
+    }
+    case reducerCases.SET_INCOMING_VOICE_CALL: {
+      return {
+        ...state,
+        incomingVoiceCall: action.incomingVoiceCall,
+      };
+    }
+    case reducerCases.SET_INCOMING_VIDEO_CALL: {
+      return {
+        ...state,
+        incomingVideoCall: action.incomingVideoCall,
+      };
+    }
+    case reducerCases.END_CALL: {
+      return {
+        ...state,
+        videoCall: undefined,
+        voiceCall: undefined,
+        incomingVoiceCall: undefined,
+        incomingVideoCall: undefined,
+      };
+    }
     case reducerCases.SET_EXIT_CHAT: {
       return {
         ...state,

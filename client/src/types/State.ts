@@ -16,6 +16,9 @@ export interface State {
 
   voiceCall?: ICall | undefined;
   incomingVoiceCall?: ICall | undefined;
+
+  videoCall?: ICall;
+  incomingVideoCall?: ICall;
 }
 
 export interface Action {
@@ -38,4 +41,7 @@ export interface Action {
 
   voiceCall?: ICall | undefined;
   incomingVoiceCall?: undefined;
+
+  videoCall?: ICall;
+  incomingVideoCall?: ICall;
 }

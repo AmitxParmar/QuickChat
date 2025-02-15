@@ -37,4 +37,6 @@ interface ICall extends IUserProfile {
   roomId?: string;
   callType?: string;
   type?: string;
+  videoType?: string;
+  voiceType?: string;
 }

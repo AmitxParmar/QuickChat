@@ -7,7 +7,9 @@ import React, { useEffect, useState } from "react";
 import { MdOutlineCallEnd } from "react-icons/md";
 import { ZegoExpressEngine } from "zego-express-engine-webrtc";
 
-function Container({ data }: { data: ICall }) {
+// Define the stream type for Zego
+
+function Container({ data }: { data: ICall | undefined }) {
   const {
     state: { socket, userInfo },
     dispatch,
@@ -24,7 +26,7 @@ function Container({ data }: { data: ICall }) {
   );
 
   useEffect(() => {
-    if (data.type === "out-going") {
+    if (data?.type === "out-going") {
       socket?.current?.on("accept-call", () => {
         setCallAccepted(true);
       });
@@ -61,56 +63,53 @@ function Container({ data }: { data: ICall }) {
           }
           const zg = new ZegoExpressEngine(appId, serverId);
           setZgVar(zg);
-          zg.on(
-            "roomStreamUpdate",
-            async (
-              roomID: string,
-              updateType: string,
-              streamList: { streamID: string }[],
-              extendedData: any
-            ) => {
-              if (updateType === "ADD") {
-                const rmVideo = document.getElementById("remote-video");
-                const vd: HTMLVideoElement | HTMLAudioElement =
-                  document.createElement(
-                    data.callType === "video" ? "video" : "audio"
-                  );
-                if (streamList[0]) {
-                  vd.id = streamList[0].streamID;
-                }
-                vd.autoplay = true;
-                vd.muted = false;
 
-                if (data.callType === "video") {
-                  (vd as HTMLVideoElement).playsInline = true;
-                }
-
-                if (rmVideo) {
-                  rmVideo.appendChild(vd);
-                }
-                const stream = await zg.startPlayingStream(
-                  streamList[0].streamID,
-                  {
-                    audio: true,
-                    video: true,
-                  }
+          // Use proper types for the roomStreamUpdate event handler
+          zg.on("roomStreamUpdate", async (_, updateType, streamList) => {
+            if (updateType === "ADD") {
+              const rmVideo = document.getElementById("remote-video");
+              const vd: HTMLVideoElement | HTMLAudioElement =
+                document.createElement(
+                  data?.callType === "video" ? "video" : "audio"
                 );
-                vd.srcObject = stream;
-              } else if (
-                updateType === "DELETE" &&
-                zg &&
-                localStream &&
-                streamList[0]?.streamID
-              ) {
-                zg.destroyStream(localStream);
-                zg.stopPublishingStream(streamList[0].streamID);
-                zg.logoutRoom(data?.roomId?.toString());
-                dispatch({
-                  type: reducerCases.END_CALL,
+              if (streamList[0]) {
+                vd.id = streamList[0].streamID;
+              }
+              vd.autoplay = true;
+              vd.muted = false;
+
+              if (data?.callType === "video") {
+                (vd as HTMLVideoElement).playsInline = true;
+              }
+
+              if (rmVideo) {
+                rmVideo.appendChild(vd);
+              }
+              let stream;
+              if (streamList[0]) {
+                stream = await zg.startPlayingStream(streamList[0].streamID, {
+                  audio: true,
+                  video: true,
                 });
               }
+              if (stream) {
+                vd.srcObject = stream;
+              }
+            } else if (
+              updateType === "DELETE" &&
+              zg &&
+              localStream &&
+              streamList[0]?.streamID
+            ) {
+              zg.destroyStream(localStream);
+              zg.stopPublishingStream(streamList[0].streamID);
+              zg.logoutRoom(data?.roomId?.toString());
+              dispatch({
+                type: reducerCases.END_CALL,
+              });
             }
-          );
+          });
+
           if (!token) {
             throw new Error("Token is required to login to the room.");
           }
@@ -127,20 +126,20 @@ function Container({ data }: { data: ICall }) {
           const localStream = await zg.createStream({
             camera: {
               audio: true,
-              video: data.callType === "video",
+              video: data?.callType === "video",
             },
           });
 
           const localVideo = document.getElementById("local-audio");
           const videoElement = document.createElement(
-            data.callType === "video" ? "video" : "audio"
+            data?.callType === "video" ? "video" : "audio"
           );
 
           videoElement.id = "video-local-zego";
           videoElement.className = "h-28 w-32";
           videoElement.autoplay = true;
           videoElement.muted = false;
-          if (data.callType === "video") {
+          if (data?.callType === "video") {
             (videoElement as HTMLVideoElement).playsInline = true;
           }
 
@@ -165,7 +164,7 @@ function Container({ data }: { data: ICall }) {
   }, [token !== undefined]);
 
   const endCall = () => {
-    const id = data.id;
+    const id = data?.id;
     if (zgVar && localStream && publishStream) {
       if (localStream) {
         zgVar.destroyStream(localStream);
@@ -173,11 +172,11 @@ function Container({ data }: { data: ICall }) {
       if (publishStream) {
         zgVar.stopPublishingStream(publishStream);
       }
-      if (data.roomId) {
+      if (data?.roomId) {
         zgVar.logoutRoom(data.roomId.toString());
       }
     }
-    if (data.callType === "voice") {
+    if (data?.callType === "voice") {
       socket?.current?.emit("reject-voice-call", {
         from: id,
       });
@@ -188,23 +187,21 @@ function Container({ data }: { data: ICall }) {
     }
     dispatch({ type: reducerCases.END_CALL });
   };
-  useEffect(() => {
-    console.log("check status: ", callAccepted, data.callType);
-  }, [callAccepted, data]);
+
   return (
     <div className="border-conversation-panel-background border-1 w-full bg-conversation-panel-background flex flex-col h-[100vh] overflow-hidden items-center justify-center text-white">
       <div className="flex flex-col gap-3 items-center">
-        <span className="text-5xl">{data.name}</span>
+        <span className="text-5xl">{data?.name}</span>
         <span className="text-lg">
-          {callAccepted && data.callType !== "video"
+          {callAccepted && data?.callType !== "video"
             ? "On going call"
             : "Calling"}
         </span>
       </div>
-      {(!callAccepted || data.callType === "voice") && (
+      {(!callAccepted || data?.callType === "voice") && (
         <div className="my-24">
           <Image
-            src={data.profilePicture as string}
+            src={data?.profilePicture as string}
             alt="Avatar"
             height={300}
             width={300}
