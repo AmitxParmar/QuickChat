@@ -33,7 +33,6 @@ function Main() {
   } = state;
 
   const [redirectLogin, setRedirectLogin] = useState<boolean>(false);
-  const [socketEvent, setSocketEvent] = useState<boolean>(false);
 
   useEffect(() => {
     if (redirectLogin) router.push("/login");

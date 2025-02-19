@@ -33,7 +33,7 @@ type Contact = {
 };
 
 interface ICall extends IUserProfile {
-  from?: string;
+  from?: IUserProfile;
   roomId?: string;
   callType?: "voice" | "video";
   type?: string;
