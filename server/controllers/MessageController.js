@@ -246,7 +246,7 @@ export const getInitialContactswithMessages = async (req, res, next) => {
       // example users: [{id: 1, name: "Minh Nghia", totalUnreadMessages: 0}, {id: 2, name: "Johnny Depth", totalUnreadMessages: 1}]
       users: Array.from(users.values()),
       // example onlineUsers: [1, 2]
-      onlineUsers: [], // Initialize onlineUsers to an empty array.  It's not defined in this scope.
+      onlineUsers: Array.from(onlineUsers.keys()), // Initialize onlineUsers to an empty array.  It's not defined in this scope.
     });
   } catch (err) {
     next(err);

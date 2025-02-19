@@ -16,7 +16,7 @@ function VoiceCall() {
           profilePicture: userInfo?.profilePicture,
           name: userInfo?.name,
         },
-        callType: voiceCall?.voiceType,
+        callType: voiceCall?.callType,
         roomId: voiceCall.roomId,
       });
     }

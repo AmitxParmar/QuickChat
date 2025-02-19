@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Avatar from "@/components/common/Avatar";
 import { MdCall } from "react-icons/md";
 import { IoVideocam } from "react-icons/io5";
@@ -13,6 +13,14 @@ function ChatHeader() {
     state: { currentChatUser, onlineUsers },
     dispatch,
   } = useStateProvider();
+
+  const [isUserOnline, setIsUserOnline] = useState(false);
+
+  useEffect(() => {
+    // Check if the current chat user is online whenever the chat user changes
+    setIsUserOnline(Boolean(onlineUsers?.includes(currentChatUser?.id ?? "")));
+  }, [currentChatUser, onlineUsers]);
+
   const [contextMenuCoordinates, setContextMenuCoordinates] = useState({
     x: 0,
     y: 0,
@@ -24,7 +32,7 @@ function ChatHeader() {
     setContextMenuCoordinates({ x: e.pageX - 50, y: e.pageY + 20 });
     setIsContextMenuVisible(true);
   };
-  console.log("ONline user", onlineUsers);
+
   const contextMenuOptions = [
     {
       name: "Exit",
@@ -38,7 +46,6 @@ function ChatHeader() {
   ];
 
   const handleVoiceCall = () => {
-    console.log("handle Voice Call!");
     dispatch({
       type: reducerCases.SET_VOICE_CALL,
       voiceCall: {
@@ -70,9 +77,7 @@ function ChatHeader() {
             {currentChatUser?.name || "Unknown User"}
           </span>
           <span className="text-secondary text-sm">
-            {currentChatUser?.id && onlineUsers?.includes(currentChatUser?.id)
-              ? "online"
-              : "offline"}
+            {isUserOnline ? "online" : "offline"}
           </span>
         </div>
         <MdCall

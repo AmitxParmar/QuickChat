@@ -7,6 +7,7 @@ function VideoCall() {
   const {
     state: { videoCall, socket, userInfo },
   } = useStateProvider();
+
   useEffect(() => {
     if (videoCall?.type === "out-going") {
       socket?.current?.emit("outgoing-video-call", {
@@ -16,7 +17,7 @@ function VideoCall() {
           profilePicture: userInfo?.profilePicture,
           name: userInfo?.name,
         },
-        callType: videoCall?.videoType,
+        callType: videoCall?.callType,
         roomId: videoCall.roomId,
       });
     }

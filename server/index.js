@@ -32,7 +32,7 @@ global.onlineUsers = new Map();
 io.on("connection", (socket) => {
   global.chatSocket = socket;
 
-  // add user
+  // [SOCKET.ON] listen event 'add-user' from client
   socket.on("add-user", (userId) => {
     onlineUsers.set(userId, socket.id);
     socket.broadcast.emit("online-users", {
@@ -40,19 +40,20 @@ io.on("connection", (socket) => {
     });
   });
 
-  // send msg
   socket.on("send-msg", (data) => {
+    // get socket id of user to send message
     const sendUserSocket = onlineUsers.get(data.to);
+    // if user is online emitting event to user
     if (sendUserSocket) {
-      io.to(sendUserSocket).emit("msg-recieve", {
+      socket.to(sendUserSocket).emit("receive-msg", {
         from: data.from,
         message: data.message,
       });
     }
   });
 
-  // voice calls
   socket.on("outgoing-voice-call", (data) => {
+    console.log("outgoing-voice-call", data);
     const sendUserSocket = onlineUsers.get(data.to);
     if (sendUserSocket) {
       socket.to(sendUserSocket).emit("incoming-voice-call", {
@@ -62,7 +63,6 @@ io.on("connection", (socket) => {
       });
     }
   });
-
   socket.on("reject-voice-call", (data) => {
     const sendUserSocket = onlineUsers.get(data.from);
     if (sendUserSocket) {
@@ -71,6 +71,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("outgoing-video-call", (data) => {
+    console.log("outgoing-video-call", data);
     const sendUserSocket = onlineUsers.get(data.to);
     if (sendUserSocket) {
       socket.to(sendUserSocket).emit("incoming-video-call", {
@@ -81,14 +82,8 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("reject-voice-call", (data) => {
-    const sendUserSocket = onlineUsers.get(data.from);
-    if (sendUserSocket) {
-      socket.to(sendUserSocket).emit("voice-call-rejected");
-    }
-  });
-
   socket.on("reject-video-call", (data) => {
+    console.log("reject-video-call", data);
     const sendUserSocket = onlineUsers.get(data.from);
     if (sendUserSocket) {
       socket.to(sendUserSocket).emit("video-call-rejected");

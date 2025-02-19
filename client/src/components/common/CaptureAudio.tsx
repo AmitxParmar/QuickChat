@@ -113,7 +113,12 @@ function CaptureAudio({ hide }: ICaptureAudio) {
         mediaRecorder.start();
       })
       .catch((error) => {
-        console.error("Recording Start Error: ", error.message.includes("Requested device not found") ? "Microphone not found. Please check your device settings." : error);
+        console.error(
+          "Recording Start Error: ",
+          error.message.includes("Requested device not found")
+            ? "Microphone not found. Please check your device settings."
+            : error
+        );
       });
   };
 

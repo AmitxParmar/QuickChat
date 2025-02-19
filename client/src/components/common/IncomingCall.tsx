@@ -10,15 +10,15 @@ function IncomingCall() {
   } = useStateProvider();
 
   const acceptCall = () => {
-    if (incomingVoiceCall?.id) {
-      dispatch({
-        type: reducerCases.SET_VOICE_CALL,
-        voiceCall: { ...incomingVoiceCall, type: "in-coming" },
-      });
-    }
+    if (!incomingVoiceCall?.id) return;
+
+    dispatch({
+      type: reducerCases.SET_VOICE_CALL,
+      voiceCall: { ...incomingVoiceCall, type: "in-coming" },
+    });
 
     socket?.current?.emit("accept-incoming-call", {
-      id: incomingVoiceCall?.id,
+      id: incomingVoiceCall.id,
     });
 
     dispatch({
@@ -28,39 +28,47 @@ function IncomingCall() {
   };
 
   const rejectCall = () => {
+    if (!incomingVoiceCall?.id) return;
+
+    socket?.current?.emit("reject-voice-call", { from: incomingVoiceCall.id });
     dispatch({
       type: reducerCases.END_CALL,
     });
-    socket?.current?.emit("reject-voice-call", { from: incomingVoiceCall?.id });
   };
 
+  if (!incomingVoiceCall) return null;
+
   return (
-    <div className="h-24 w-80 fixed bottom-8 right-6 mb-0 z-50 rounded-sm flex gap-5 items-center justify-start text-white p-4 bg-conversation-panel-background drops-shadow-2xl border-2 border-icon-green py-14">
-      <div>
-        <Image
-          src={incomingVoiceCall?.profilePicture as string}
-          alt="avatar"
-          width={70}
-          height={70}
-          className="rounded-full"
-        />
-      </div>
-      <div>
-        <div>{incomingVoiceCall?.name}</div>
-        <div className="text-xs">Incoming call</div>
-        <div className="flex gap-2 mt-2">
-          <button
-            className="bg-red-500 p-1 px-3 text-sm rounded-full"
-            onClick={rejectCall}
-          >
-            Reject
-          </button>
-          <button
-            className="bg-green-500 p-1 px-3 text-sm rounded-full"
-            onClick={acceptCall}
-          >
-            Accept
-          </button>
+    <div className="fixed bottom-8 right-6 z-50 w-80 rounded-lg bg-conversation-panel-background shadow-xl border-2 border-icon-green p-4">
+      <div className="flex items-center gap-4">
+        <div className="flex-shrink-0">
+          <Image
+            src={incomingVoiceCall.profilePicture || "/default-avatar.png"}
+            alt="avatar"
+            width={70}
+            height={70}
+            className="rounded-full"
+          />
+        </div>
+        <div className="flex-1">
+          <div className="text-white">
+            {incomingVoiceCall.name || "Unknown User"}
+          </div>
+          <div className="text-xs text-gray-300">Incoming voice call</div>
+          <div className="flex gap-2 mt-2">
+            <button
+              className="bg-red-500 hover:bg-red-600 px-3 py-1 text-sm rounded-full text-white transition-colors"
+              onClick={rejectCall}
+            >
+              Reject
+            </button>
+            <button
+              className="bg-green-500 hover:bg-green-600 px-3 py-1 text-sm rounded-full text-white transition-colors"
+              onClick={acceptCall}
+            >
+              Accept
+            </button>
+          </div>
         </div>
       </div>
     </div>

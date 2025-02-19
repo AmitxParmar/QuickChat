@@ -35,12 +35,12 @@ export interface Action {
   messagesSearch?: boolean;
   newMessage?: IMessage;
   userContacts?: IUserProfile[];
-  onlineUsers?: [id: string] | [];
+  onlineUsers?: [string] | [];
   filteredContacts?: IUserProfile[];
   fromSelf?: boolean;
 
   voiceCall?: ICall | undefined;
-  incomingVoiceCall?: undefined;
+  incomingVoiceCall?: ICall | undefined;
 
   videoCall?: ICall;
   incomingVideoCall?: ICall;

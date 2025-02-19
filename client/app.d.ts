@@ -20,10 +20,10 @@ type IMessage = {
   id: string;
   type: "text" | "file" | "image" | "audio";
   message: string;
-  recieverId: string;
+  receiverId: string;
   senderId: string;
   messageStatus: "sent" | "delivered" | "read";
-  reciever: IUserProfile;
+  receiver: IUserProfile;
   sender: IUserProfile;
   createdAt: string;
 };
@@ -35,8 +35,6 @@ type Contact = {
 interface ICall extends IUserProfile {
   from?: string;
   roomId?: string;
-  callType?: string;
+  callType?: "voice" | "video";
   type?: string;
-  videoType?: string;
-  voiceType?: string;
 }

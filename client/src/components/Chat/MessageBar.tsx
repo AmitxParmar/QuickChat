@@ -77,11 +77,12 @@ function MessageBar() {
         fromSelf: true,
       });
 
-      // Ensure messages is always an array
-      dispatch({
-        type: reducerCases.SET_MESSAGES,
-        messages: [], // or whatever valid IMessage[] you want to set
-      });
+      // Remove the line that resets messages to an empty array
+      // This line was causing the UI messages to disappear
+      // dispatch({
+      //   type: reducerCases.SET_MESSAGES,
+      //   messages: [], // or whatever valid IMessage[] you want to set
+      // });
 
       setMessage("");
     } catch (err) {
