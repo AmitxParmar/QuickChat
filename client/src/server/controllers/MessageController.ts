@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import getPrismaInstance from "../utils/PrismaClient";
 
 import { onlineUsers } from "../socket";
-import { MulterHandler, MsgQuery } from "../types/ServerTypes";
+import { MsgQuery } from "../types/ServerTypes";
 import { Prisma } from "@prisma/client";
 import { RequestHandler } from "express";
 

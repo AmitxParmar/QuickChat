@@ -18,7 +18,7 @@ function RndNum(a, b) {
 // Function to generate random 16 character string
 function makeRandomIv() {
   var str = "0123456789abcdefghijklmnopqrstuvwxyz";
-  var result = [];
+  var result: string[] = [];
   for (var i = 0; i < 16; i++) {
     var r = Math.floor(Math.random() * str.length);
     result.push(str.charAt(r));
