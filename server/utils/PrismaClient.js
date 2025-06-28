@@ -1,8 +1,5 @@
-/* import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-const { PrismaClient } = require("@prisma/client");
- */
-import { PrismaClient } from "@prisma/client";
+import pkg from "@prisma/client";
+const { PrismaClient } = pkg;
 let prismaInstance;
 
 export default function getPrismaInstance() {
