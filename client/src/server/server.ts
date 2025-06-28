@@ -17,6 +17,7 @@ app.prepare().then(() => {
   // CORS setup
   /* server.use(cors()); */
   // Custom Express routes
+  server.use(cors());
   server.get("/api/hello", (req: Request, res: Response) => {
     res.json({ message: "Hello from Express!" });
   });

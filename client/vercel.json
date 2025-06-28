@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
+    }
+  ],
+  "devCommand": "pnpm run dev",
+  "installCommand": "pnpm install",
+  "buildCommand": "pnpm run prisma:generate && prisma migrate deploy && pnpm run build"
+}
