@@ -33,26 +33,25 @@ export const addMessage = async (
   try {
     const prisma = getPrismaInstance();
     const { message, from, to } = req.body;
-    const getUser = onlineUsers.get(to);
-    if (message && from && to) {
-      const newMessage = await prisma.messages.create({
-        data: {
-          message,
-          sender: {
-            connect: { id: from },
-          },
-          receiver: {
-            connect: { id: to },
-          },
-          messageStatus: getUser ? "delivered" : "sent",
-        },
-        include: { sender: true, receiver: true },
-      });
-      res.status(201).send({ message: newMessage });
+
+    // 🔒 Validate early
+    if (!message || !from || !to) {
+      res.status(400).send("From, to and message are required.");
     }
-    res.status(400).send("From,to and Message is required.");
+
+    const newMessage = await prisma.messages.create({
+      data: {
+        message,
+        sender: { connect: { id: from } },
+        receiver: { connect: { id: to } },
+        messageStatus: onlineUsers.has(to) ? "delivered" : "sent",
+      },
+      include: { sender: true, receiver: true },
+    });
+
+    res.status(201).json({ message: newMessage });
   } catch (err) {
-    next(err);
+    next(err); // call Express error middleware; no response here
   }
 };
 
