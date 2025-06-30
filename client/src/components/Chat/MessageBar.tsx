@@ -63,26 +63,18 @@ function MessageBar() {
         message,
       });
 
+      // Fix: emit the message data in the correct format
       socket?.current?.emit("send-msg", {
         to: currentChatUser?.id,
         from: userInfo?.id,
-        message: data.message,
+        message: data.message, // This should be the full message object
       });
 
       dispatch({
         type: reducerCases.ADD_MESSAGE,
-        newMessage: {
-          ...data.message,
-        },
+        newMessage: data.message,
         fromSelf: true,
       });
-
-      // Remove the line that resets messages to an empty array
-      // This line was causing the UI messages to disappear
-      // dispatch({
-      //   type: reducerCases.SET_MESSAGES,
-      //   messages: [], // or whatever valid IMessage[] you want to set
-      // });
 
       setMessage("");
     } catch (err) {
@@ -106,16 +98,17 @@ function MessageBar() {
         },
       });
       if (response.status === 201) {
+        // Fix: emit the message data in the correct format
         socket?.current?.emit("send-msg", {
           to: currentChatUser?.id,
           from: userInfo?.id,
-          message: response.data.message,
-        }); // NOTE: continue here tomorrow fix: this (send receive message socket to be specific)
+          message: response.data.message, // Full message object
+        });
+
         dispatch({
           type: reducerCases.ADD_MESSAGE,
-          newMessage: {
-            ...response.data.message,
-          },
+          newMessage: response.data.message,
+          fromSelf: true,
         });
       }
     } catch (err) {

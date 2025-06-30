@@ -4,11 +4,19 @@ export const onlineUsers = new Map<string, string>();
 
 const socketHandler = (io: SocketIOServer) => {
   io.on("connection", (socket) => {
+    console.log("socket connected");
     const userId = socket.handshake.query.userId as string;
     onlineUsers.set(userId, socket.id);
 
     io.emit("get-online-users", {
       onlineUsers: Array.from(onlineUsers.keys()),
+    });
+
+    socket.on("add-user", (userId) => {
+      onlineUsers.set(userId, socket.id);
+      socket.broadcast.emit("online-users", {
+        onlineUsers: Array.from(onlineUsers.keys()),
+      });
     });
 
     socket.on("send-msg", (data) => {

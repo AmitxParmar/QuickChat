@@ -50,6 +50,7 @@ const reducer = (state: State, action: Action): State => {
         socket: action.socket,
       };
     case reducerCases.ADD_MESSAGE:
+      console.log("Adding message to state:", action.newMessage); // Debug log
       return {
         ...state,
         messages: action.newMessage

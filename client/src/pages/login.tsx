@@ -71,7 +71,7 @@ function login() {
         <span className="text-7xl">Whatsapp</span>
       </div>
       <button
-        className="flex items-center  justify-center gap-7 bg-search-input-container-background p-5 rounded-lg"
+        className="flex items-center justify-center gap-7 bg-search-input-container-background p-5 rounded-lg"
         onClick={handleLogin}
       >
         <FcGoogle />

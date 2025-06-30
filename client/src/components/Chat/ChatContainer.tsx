@@ -3,14 +3,43 @@ import MessageStatus from "@/components/common/MessageStatus";
 import ImageMessage from "./ImageMessage";
 import { useStateProvider } from "@/context/StateContext";
 import VoiceMessage from "./VoiceMessage";
+import { useEffect } from "react";
+import { reducerCases } from "@/context/constants";
 
 function ChatContainer() {
   const {
-    state: { messages, currentChatUser, userInfo },
+    state: { messages, currentChatUser, userInfo, socket },
+    dispatch,
   } = useStateProvider();
+  // Add this useEffect to handle incoming messages
+  useEffect(() => {
+    if (socket?.current) {
+      const handleIncomingMessage = (data) => {
+        console.log("Received message via socket:", data); // Debug log
+
+        // Only add message if it's for the current chat
+        if (data.from === currentChatUser?.id || data.to === userInfo?.id) {
+          dispatch({
+            type: reducerCases.ADD_MESSAGE,
+            newMessage: data.message,
+            fromSelf: false,
+          });
+        }
+      };
+
+      // Listen for incoming messages
+      socket.current.on("msg-receive", handleIncomingMessage);
+
+      // Cleanup
+      return () => {
+        socket.current?.off("msg-receive", handleIncomingMessage);
+      };
+    }
+  }, [socket, currentChatUser, userInfo, dispatch]);
 
   return (
     <div className="h-[80vh] w-full relative flex-grow overflow-auto custom-scrollbar">
+      {/* Your existing JSX */}
       <div className="bg-chat-background bg-fixed fixed h-full w-full opacity-5 left-0 top-0 !z-0"></div>
       <div className="mx-10 my-6 relative bottom-0 z-40">
         <div className="flex w-full">
@@ -28,8 +57,8 @@ function ChatContainer() {
                   <div
                     className={`text-white px-4 py-1 text-sm rounded-md flex gap-2 items-end max-w-[45%] ${
                       message.senderId === currentChatUser?.id
-                        ? "bg-outgoing-background"
-                        : "bg-incoming-background"
+                        ? "bg-incoming-background"
+                        : "bg-outgoing-background"
                     }`}
                   >
                     <span className="break-all leading-7">
