@@ -17,8 +17,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   env: {
-    NEXT_PUBLIC_ZEGO_APP_ID: 209392776,
-    NEXT_PUBLIC_ZEGO_SERVER_ID: "41057fd84869483ae47f13360c1cea5b",
+    API_URL: process.env.API_URL,
   },
   images: {
     remotePatterns: [

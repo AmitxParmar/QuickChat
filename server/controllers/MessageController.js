@@ -1,5 +1,6 @@
 import getPrismaInstance from "../utils/PrismaClient.js";
 import { renameSync } from "fs";
+import { onlineUsers } from "../socket.js";
 
 export const addMessage = async (req, res, next) => {
   try {

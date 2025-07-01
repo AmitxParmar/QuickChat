@@ -84,24 +84,6 @@ function Main() {
     };
   }, [userInfo]);
 
-  useEffect(() => {
-    if (socket?.current) {
-      // Listen for incoming messages
-      socket.current.on("msg-receive", (data) => {
-        dispatch({
-          type: reducerCases.ADD_MESSAGE,
-          newMessage: data.message,
-          fromSelf: false,
-        });
-      });
-
-      // Cleanup listener on unmount
-      return () => {
-        socket.current?.off("msg-receive");
-      };
-    }
-  }, [socket, dispatch]);
-
   // Handle socket events
   useEffect(() => {
     if (!socket.current || !userInfo) return;
